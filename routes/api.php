@@ -26,4 +26,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('account/create', 'App\Http\Controllers\AccountController@create');
     Route::get('account/getall', 'App\Http\Controllers\AccountController@getAll');
     Route::post('account/fund', 'App\Http\Controllers\AccountController@fund');
+    Route::post('account/transfer_fund', 'App\Http\Controllers\AccountController@transfer_fund');
+    Route::post('account/withdraw_fund', 'App\Http\Controllers\AccountController@withdraw_fund');
 });
