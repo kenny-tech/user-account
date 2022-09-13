@@ -23,5 +23,7 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
-    // Route::post('account/create', 'App\Http\Controllers\AccountController@create');
+    Route::post('account/create', 'App\Http\Controllers\AccountController@create');
+    Route::get('account/getall', 'App\Http\Controllers\AccountController@getAll');
+    Route::post('account/fund', 'App\Http\Controllers\AccountController@fund');
 });
