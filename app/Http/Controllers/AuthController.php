@@ -3,27 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Validator;
 use App\Models\User;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $this->validate($request, [
-            'name' => 'required|min:4',
-            'email' => 'required|email',
-            'password' => 'required|min:8',
+        // validates user data
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:2',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',        
         ]);
- 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
-       
-        $token = $user->createToken('UserAccount')->accessToken;
- 
-        return response()->json(['token' => $token], 200);
+        
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        
+        try {
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password)
+            ];
+
+            // create account
+            $user = User::create($data);
+
+            if ($user!=null) {
+                return $this->sendSuccess($user, 'success');
+            } else {
+                return $this->sendError($user = [], 'Unable to create account. Please try again');
+            }
+     
+        } catch (\Exception $e) {
+            return $this->sendError($user = [], $e->getMessage());
+        }
     }
  
     /**
@@ -35,12 +51,17 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => $request->password
         ];
- 
-        if (auth()->attempt($data)) {
-            $token = auth()->user()->createToken('UserAccount')->accessToken;
-            return response()->json(['token' => $token], 200);
-        } else {
-            return response()->json(['error' => 'Unauthorised'], 401);
+
+        try {
+            if (auth()->attempt($data)) {
+                $user['token'] = auth()->user()->createToken('UserAccount')->accessToken;
+                $user['user'] = auth()->user();
+                return $this->sendSuccess($user, 'success');
+            } else {
+                return $this->sendError($user = [], 'Invalid Email/Password');
+            }
+        } catch (\Exception $e) {
+            return $this->sendError($user = [], $e->getMessage());
         }
     }  
 }
