@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Account extends Model
+class TransactionLog extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'account_name', 'account_number', 'balance', 'user_id'
+        'transaction_type', 'amount', 'description', 'user_id', 'account_id'
     ];    
 }
