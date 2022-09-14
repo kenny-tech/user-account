@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AccountController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +15,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('account/create', 'App\Http\Controllers\AccountController@create');
+    Route::get('account/getall', 'App\Http\Controllers\AccountController@getAll');
+    Route::post('account/fund', 'App\Http\Controllers\AccountController@fund');
+    Route::post('account/transfer_fund', 'App\Http\Controllers\AccountController@transfer_fund');
+    Route::post('account/withdraw_fund', 'App\Http\Controllers\AccountController@withdraw_fund');
 });
